@@ -3,5 +3,3 @@ generate_lfsr.dwarf
 lfsr
 lfsr.out
 lfsr.vcd
-lfsr.v
-
