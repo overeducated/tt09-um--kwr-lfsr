@@ -749,9 +749,9 @@
 
                     # kwr::HACK!!!! fixes layout for two digits…
                     if (i < 10)
-                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value  <= #{lfsr_length_max}'b#{mask}; mask_valid  = #{valid}; end"
+                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = #{valid}; end"
                     else
-                        puts  "               #{lfsr_length_size}'d#{i} : begin mask_value  <= #{lfsr_length_max}'b#{mask}; mask_valid  = #{valid}; end"
+                        puts  "               #{lfsr_length_size}'d#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = #{valid}; end"
                     end # if
                 end # do
 
@@ -765,13 +765,13 @@
                 do | i |
                     # kwr::HACK!!!! fixes layout for two digits…
                     if (i < 10)
-                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value  <= #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
+                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
                     else
-                        puts "               #{lfsr_length_size}'d#{i} : begin mask_value  <= #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
+                        puts "               #{lfsr_length_size}'d#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
                     end # if
                 end # do
 
-                puts "             default : begin mask_value  <= #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
+                puts "             default : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
                 puts "        endcase"
 # puts "$display(#{DQ}$$$$ n_taps=#{n_taps} lfsr_length=%d, mask_value=0b%064b mask_valid=0b%b#{DQ}, lfsr_length, mask_value, mask_valid);"
                 puts "    end // always"
@@ -860,14 +860,14 @@
             puts "    begin"
             puts "        if      (lfsr_n_taps)"
             puts "        begin"
-            puts "            mask_value  <= mask_value_4_taps;"
-            puts "            mask_valid  <= mask_valid_4_taps;"
+            puts "            mask_value  = mask_value_4_taps;"
+            puts "            mask_valid  = mask_valid_4_taps;"
             puts "        end"
 
             puts "        else"
             puts "        begin"
-            puts "            mask_value  <= mask_value_2_taps;"
-            puts "            mask_valid  <= mask_valid_2_taps;"
+            puts "            mask_value  = mask_value_2_taps;"
+            puts "            mask_valid  = mask_valid_2_taps;"
             puts "        end"
             puts "        // endif"
             puts "    end // always"
@@ -1024,7 +1024,7 @@
             puts "    // constant outputs"
 
             puts "    assign    uio_oe         = UIO_OE;"
-            puts "    assign    _unused        = &{ena, 1'b0};"
+            puts "    assign    _unused        = &{ena, &uio_in, 1'b0};"
 
             puts ""
 
@@ -1042,7 +1042,7 @@
             puts "    reg                   step_on;"
 
 
-            puts "    reg                   clock_mask;"
+            # puts "    reg                   clock_mask;"
             puts "    reg                   c_clk;"
 
             puts ""
@@ -1096,17 +1096,17 @@
             puts "        begin"
             puts "            if (step)"
             puts "            begin"
-            puts "                c_clk     = ~step_on;"
+            puts "                c_clk     <= ~step_on;"
             puts "            end"
 
             puts "            else"
-            puts "                c_clk     = 0;"
+            puts "                c_clk     <= 0;"
             puts "            end"
             puts "            // endif"
 
             puts "        else"
             puts "        begin"
-            puts "                c_clk     = 1;"
+            puts "                c_clk     <= 1;"
             puts "        end"
             puts "        // endif"
 
@@ -1117,8 +1117,8 @@
             puts "    // generate and pass on a conditioned clock (falling)"
             puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}#{clock_symbol})"
             puts "    begin"
-            puts "                 step_on  = step;"
-            puts "                 c_clk    = 0;"
+            puts "                 step_on  <= step;"
+            puts "                 c_clk    <= 0;"
             puts "    end // always"
 
             puts ""
