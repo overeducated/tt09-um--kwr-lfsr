@@ -382,819 +382,114 @@ endmodule // tt_um__kwr_lfsr__top
 
 
 // ////////////////////////////////////////////////////////////////////////
-// @BEGIN Test_Logic
+// @BEGIN Test_LFSR
 // ////////////////////////////////////////////////////////////////////////
 
-`ifndef _tt09_kwr_lfsr__test_logic_
-`define _tt09_kwr_lfsr__test_logic_
+`ifndef _tt09_kwr_lfsr__test_lfsr_
+`define _tt09_kwr_lfsr__test_lfsr_
 
 // ////////////////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
 
 // ... test code goes here ....
 
-module test_logic;
-    reg                   clk;        // clock
-    reg                   rst_n;      // reset_n - low to reset
-    reg                   ena;        // will go high when the design is enabled
-    reg   [7:0]           ui_in;      // Dedicated inputs
-    reg   [7:0]           uio_in;     // IOs: Input path
-    wire  [7:0]           uo_out;     // Dedicated outputs
-    wire  [7:0]           uio_out;    // IOs: Output path
-    wire  [7:0]           uio_oe;     // IOs: Enable path (active high: 0=input, 1=output)
+module test_lfsr;
+    reg                   clk;
+    reg                   rst_n;
+    reg          [4:0]    lfsr_length;
+    reg                   lfsr_n_taps;
 
-    integer               cycle;
-    reg                   hold;
-    reg                   step;
-    reg                   n_taps;
-    reg   [4:0]           length;
+    wire        [31:0]    lfsr_value;
+    wire                  lfsr_valid;
 
-    tt_um__kwr_lfsr__top    top
+    lfsr_fibonacci    lfsr
     (
         .clk(clk),
         .rst_n(rst_n),
-        .ena(ena),
-        .ui_in(ui_in),
-        .uio_in(uio_in),
-        .uo_out(uo_out),
-        .uio_out(uio_out),
-        .uio_oe(uio_oe)
+        .lfsr_length(lfsr_length),
+        .lfsr_n_taps(lfsr_n_taps),
+        .lfsr_value(lfsr_value),
+        .lfsr_valid(lfsr_valid)
     );
 
-    // input IO connections
-    parameter    UI_IN_HOLD               = 7;
-    parameter    UI_IN_STEP               = 6;
-    parameter    UI_IN_N_TAPS             = 5;
-    parameter    UI_IN_LENGTH_4           = 4;
-    parameter    UI_IN_LENGTH_3           = 3;
-    parameter    UI_IN_LENGTH_2           = 2;
-    parameter    UI_IN_LENGTH_1           = 1;
-    parameter    UI_IN_LENGTH_0           = 0;
-
-    // bidirectional IO connections (Static)
-    parameter    UIO_OUT_VALID            = 7;
-    parameter    UIO_OUT_VALUE_14         = 6;
-    parameter    UIO_OUT_VALUE_13         = 5;
-    parameter    UIO_OUT_VALUE_12         = 4;
-    parameter    UIO_OUT_VALUE_11         = 3;
-    parameter    UIO_OUT_VALUE_10         = 2;
-    parameter    UIO_OUT_VALUE_09         = 1;
-    parameter    UIO_OUT_VALUE_08         = 0;
-
-    // bidirectional IO output-enable (Static)
-    parameter    UIO_OE                   = 8'b11111111;
-
-    // output IO connections (Static)
-    parameter    UO_OUT_VALUE_07          = 7;
-    parameter    UO_OUT_VALUE_06          = 6;
-    parameter    UO_OUT_VALUE_05          = 5;
-    parameter    UO_OUT_VALUE_04          = 4;
-    parameter    UO_OUT_VALUE_03          = 3;
-    parameter    UO_OUT_VALUE_02          = 2;
-    parameter    UO_OUT_VALUE_01          = 1;
-    parameter    UO_OUT_VALUE_00          = 0;
+    integer               cycle;
 
     initial
     begin
-        cycle  = 0;
-        $dumpfile("lfsr.vcd");
-        $dumpvars(0, test_logic, top);
-    end // initial
+        cycle             = 0;
+        $display("#### cycle = %d", cycle);
+
+        clk               = 0;
+        rst_n             = 1;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        lfsr_length       = 5'd7;
+        lfsr_n_taps       = 0;
+
+        #50;
+        rst_n             = 0;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        clk               = 1;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        clk               = 0;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        clk               = 1;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        clk               = 0;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        clk               = 1;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        rst_n             = 1;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        #50;
+        clk               = 0;
+        $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
+
+        cycle  = cycle + 1;
+    end
 
     always
     begin
-        $display("==================================== cycle = %d ====================================", cycle);
-        if      (cycle ==   0)
+        if      (cycle > 100)
         begin
-            $display("!!!! @ %d    Initializion begun           .........    .........    .........", cycle);
-            $display("~~~~ INIT    taps 2, length 7");
-            hold                                  = 0;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-
-            #0;
-            clk                                   = 0;
-            rst_n                                 = 1;
-
-            #25;
-            rst_n                                 = 0;
-
-            #25;
-            clk                                   = 1;
-
-            #25;
-            rst_n                                 = 1;
-
-            $display("!!!! @ %d    Initialization completed     .........    .........    .........", cycle);
-        end
-
-        else if (cycle ==   20)
-        begin
-            $display("~~~~ HOLD");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   25)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   26)
-        begin
-            $display("~~~~ HOLD");
-            hold                                  = 0;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   29)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   31)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   32)
-        begin
-            $display("~~~~ HOLD");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   34)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   36)
-        begin
-            $display("~~~~ HOLD");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   38)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   40)
-        begin
-            $display("~~~~ RUN STEP");
-            hold                                  = 0;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   45)
-        begin
-            $display("~~~~ RUN");
-            hold                                  = 0;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   47)
-        begin
-            $display("~~~~ RUN STEP");
-            hold                                  = 0;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   49)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   51)
-        begin
-            $display("~~~~ HOLD");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   54)
-        begin
-            $display("~~~~ HOLD STEP");
-            hold                                  = 1;
-            step                                  = 1;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==   57)
-        begin
-            $display("~~~~ HOLD");
-            hold                                  = 1;
-            step                                  = 0;
-            length                                = 7;
-            n_taps                                = 0;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
-        end
-
-        else if (cycle ==  60)
-        begin
-            $display("!!!! @ %d    Renitializion begun           .........    .........    .........", cycle);
-            $display("~~~~ INIT    taps 4 length 11");
-            hold                                  = 0;
-            step                                  = 0;
-            length                                = 11;
-            n_taps                                = 1;
-
-            ui_in[UI_IN_HOLD]                     = hold;
-            ui_in[UI_IN_STEP]                     = step;
-            ui_in[UI_IN_N_TAPS]                   = n_taps;
-            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;
-
-            #0;
-            clk                                   = 0;
-            rst_n                                 = 1;
-
-            #25;
-            rst_n                                 = 0;
-
-            #25;
-            clk                                   = 1;
-
-            #25;
-            rst_n                                 = 1;
-
-            $display("!!!! @ %d    Reinitialization completed     .........    .........    .........", cycle);
-        end
-
-        else if (cycle  > 100)
-        begin
-            $display("#### @ %d    #########", cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-
             $finish;
-        end
-
-        else if (cycle  >  50)
-        begin
-            #50;
-            clk                                   = 1;
-
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
         end
 
         else if (cycle > 0)
         begin
             #50;
-            clk                                   = 1;
+            clk               = 1;
+            $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
 
-            $display("^^^^ @ %d    <<<<<<<<<    <<<<<<<<<",                                           cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
             #50;
-            clk                                   = 0;
-
-            $display("xxxx @ %d                 ---------     ---------",                             cycle);
-
-            $display("        clk      = 0b%b", clk);
-            $display("        rst_n    = 0b%b", rst_n);
-            $display("        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b", ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);
-            $display("        uio_in   = 0b%08b", uio_in);
-            $display("        uo_out   = 0b%08b                   value_l =           0b%08b", uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);
-            $display("        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b", uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);
-            $display("vvvv @ %d                          >>>>>>>>>     >>>>>>>>>",                    cycle);
+            clk               = 0;
+            $display("#### cycle = %d, clk = %d, rst_n = %d, lfsr_valid = %d, lfsr_value = 0b%07b", cycle, clk, rst_n, lfsr_valid, lfsr_value[6:0]);
         end
         // endif
 
-        cycle  = cycle + 1;
+        cycle             = cycle + 1;
     end // always
 
-endmodule // test_logic
+endmodule // test_lfsr
 
 // ////////////////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
 
-`endif // _tt09_kwr_lfsr__test_logic_
+`endif // _tt09_kwr_lfsr__test_lfsr_
 
 // ////////////////////////////////////////////////////////////////////////
-// @END Test_Logic
+// @END Test_LFSR
 // ////////////////////////////////////////////////////////////////////////

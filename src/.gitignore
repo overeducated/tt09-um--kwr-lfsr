@@ -3,3 +3,6 @@ generate_lfsr.dwarf
 lfsr
 lfsr.out
 lfsr.vcd
+RELEASE
+TEST_LFSR
+TEST_LOGIC
