@@ -627,6 +627,10 @@
         ##################
 
         def self.puts_io_parameters : Nil
+            puts "    // verilator lint_off UNUSEDSIGNAL"
+
+            puts ""
+
             puts "    // input IO connections"
             puts "    parameter    UI_IN_HOLD               = 7;"
             puts "    parameter    UI_IN_STEP               = 6;"
@@ -665,6 +669,8 @@
             puts "    parameter    UO_OUT_VALUE_02          = 2;"
             puts "    parameter    UO_OUT_VALUE_01          = 1;"
             puts "    parameter    UO_OUT_VALUE_00          = 0;"
+
+            puts "    // verilator lint_on"
         end # def self.puts_io_parameters
 
         ##################
@@ -971,6 +977,21 @@
 
         ##################
 
+        def self.expand_symbol_range(*, symbol, from, to)
+            # kwr::HACK!!!! fixed max width and pattern…
+            (from..to).map \
+            do | i |
+                if (i >= 10)
+                    "#{symbol}_#{i}"
+                else
+                    "#{symbol}_0#{i}"
+                end
+            end \
+            .join(", ")
+        end # def self.expand_symbol_range
+
+        ##################
+
         def self.generate_logic(gen_opts) : Nil
             clock_symbol      = gen_opts.clock_symbol
             clock_polarity    = gen_opts.clock_polarity
@@ -1021,13 +1042,6 @@
 
             puts ""
 
-            puts "    // constant outputs"
-
-            puts "    assign    uio_oe         = UIO_OE;"
-            puts "    assign    _unused        = &{ena, &uio_in, 1'b0};"
-
-            puts ""
-
             puts "// ////////////////////////////////////////////////////////////////////////"
 
             puts ""
@@ -1044,11 +1058,14 @@
 
             # puts "    reg                   clock_mask;"
             puts "    reg                   c_clk;"
+            puts "    reg                   c_clk_mask;"
 
             puts ""
 
             puts "    wire        [#{lfsr_length_max  - 1}:0]    value;"
             puts "    wire                  valid;"
+
+            puts ""
 
             puts "    lfsr_fibonacci    lfsr"
             puts "    ("
@@ -1066,6 +1083,14 @@
 
             puts ""
 
+            puts "    // constant outputs"
+
+            puts "    assign    uio_oe         = UIO_OE;"
+            # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], #{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}, #{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}, 1'b0};"
+            puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], 1'b0};"
+
+            puts ""
+
             puts "    // ////////////////////////////////////////////////////////////////////////"
             puts "    // get inputs"
 
@@ -1077,7 +1102,6 @@
             puts "        step                = ui_in[UI_IN_STEP];"
             puts "        n_taps              = ui_in[UI_IN_N_TAPS];"
             puts "        length              = ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0];"
-
             puts "    end // always"
 
             puts ""
@@ -1096,20 +1120,27 @@
             puts "        begin"
             puts "            if (step)"
             puts "            begin"
-            puts "                c_clk     <= ~step_on;"
+            puts "                c_clk_mask     <= ~step_on;"
             puts "            end"
 
             puts "            else"
-            puts "                c_clk     <= 0;"
+            puts "                c_clk_mask     <= 0;"
             puts "            end"
             puts "            // endif"
 
             puts "        else"
             puts "        begin"
-            puts "                c_clk     <= 1;"
+            puts "                c_clk_mask     <= 1;"
             puts "        end"
             puts "        // endif"
 
+            puts "    end // always"
+
+            puts ""
+
+            puts "    always @(*)"
+            puts "    begin"
+            puts "        c_clk  = clk & c_clk_mask;"
             puts "    end // always"
 
             puts ""
@@ -1118,7 +1149,6 @@
             puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}#{clock_symbol})"
             puts "    begin"
             puts "                 step_on  <= step;"
-            puts "                 c_clk    <= 0;"
             puts "    end // always"
 
             puts ""
@@ -1129,17 +1159,17 @@
             puts "    begin"
             puts "        if      (#{polarity?(reset_polarity, pos: "", neg: "~")}#{reset_symbol})"
             puts "        begin"
-            puts "            uio_out[UIO_OUT_VALID]                       = 0;"
-            puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]   = 0;"
-            puts "            uo_out                                       = 0;"
+            puts "            uio_out[UIO_OUT_VALID]                      <= 0;"
+            puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
+            puts "            uo_out                                      <= 0;"
 
             puts "        end"
 
             puts "        else"
             puts "        begin"
-            puts "            uio_out[UIO_OUT_VALID]                       = valid;"
-            puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]   = value[14:08];"
-            puts "            uo_out                                       = value[07:00];"
+            puts "            uio_out[UIO_OUT_VALID]                      <= valid;"
+            puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= value[14:08];"
+            puts "            uo_out                                      <= value[07:00];"
             puts "        end"
             puts "        // endif"
 
