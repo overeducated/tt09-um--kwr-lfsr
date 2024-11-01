@@ -274,7 +274,6 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
         .lfsr_valid(valid)
     );
 
-    // verilator lint_off UNUSEDSIGNAL
 
     // input IO connections
     parameter    UI_IN_HOLD               = 7;
@@ -308,7 +307,6 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
     parameter    UO_OUT_VALUE_02          = 2;
     parameter    UO_OUT_VALUE_01          = 1;
     parameter    UO_OUT_VALUE_00          = 0;
-    // verilator lint_on
 
     // constant outputs
     assign    uio_oe         = UIO_OE;
