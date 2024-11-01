@@ -246,9 +246,6 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 );
 
     // All unused inputs must be used to prevent warnings
-    wire                  _u0;
-    wire                  _u1;
-    wire                  _u2;
     wire                  _unused;
 
 // ////////////////////////////////////////////////////////////////////////
@@ -310,7 +307,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 
     // constant outputs
     assign    uio_oe         = UIO_OE;
-    assign    _unused        = &{ena, &uio_in, 1'b0};
+    assign    _unused        = &{ena, &uio_in, &value[31:14], 1'b0};
 
     // ////////////////////////////////////////////////////////////////////////
     // get inputs
