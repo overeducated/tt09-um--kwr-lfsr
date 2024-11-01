@@ -627,7 +627,7 @@
         ##################
 
         def self.puts_io_parameters : Nil
-            puts "    // verilator lint_off UNUSEDSIGNAL"
+            # puts "    // verilator lint_off UNUSEDSIGNAL"
 
             puts ""
 
@@ -670,7 +670,7 @@
             puts "    parameter    UO_OUT_VALUE_01          = 1;"
             puts "    parameter    UO_OUT_VALUE_00          = 0;"
 
-            puts "    // verilator lint_on"
+            # puts "    // verilator lint_on"
         end # def self.puts_io_parameters
 
         ##################
