@@ -310,6 +310,10 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 
     // constant outputs
     assign    uio_oe         = UIO_OE;
+    assign    _u0            = &{ena, &uio_in, 1'b0};
+    assign    _u1            = &{&UI_IN_LENGTH_01, &UI_IN_LENGTH_02, &UI_IN_LENGTH_03};
+    assign    _u2            = &{&UIO_OUT_VALUE_00, &UIO_OUT_VALUE_01, &UIO_OUT_VALUE_02, &UIO_OUT_VALUE_03, &UIO_OUT_VALUE_04, &UIO_OUT_VALUE_05, &UIO_OUT_VALUE_06, &UIO_OUT_VALUE_07, &UIO_OUT_VALUE_08, &UIO_OUT_VALUE_09, &UIO_OUT_VALUE_10, &UIO_OUT_VALUE_11, &UIO_OUT_VALUE_12, &UIO_OUT_VALUE_13};
+    assign    _unused        = &{_u0, _u1, _u2};
 
     // ////////////////////////////////////////////////////////////////////////
     // get inputs

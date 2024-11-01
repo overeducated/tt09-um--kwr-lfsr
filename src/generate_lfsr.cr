@@ -1092,10 +1092,10 @@
             # puts "    assign    _unused        = &{ena, &uio_in, 1'b0};"
             # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], 1'b0};"
             # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], #{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}, #{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}, 1'b0};"
-            # puts "    assign    _u0            = &{ena, &uio_in, 1'b0};"
-            # puts "    assign    _u1            = &{#{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}};"
-            # puts "    assign    _u2            = &{#{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}};"
-            # puts "    assign    _unused        = &{_u0, _u1, _u2};"
+            puts "    assign    _u0            = &{ena, &uio_in, 1'b0};"
+            puts "    assign    _u1            = &{#{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}};"
+            puts "    assign    _u2            = &{#{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}};"
+            puts "    assign    _unused        = &{_u0, _u1, _u2};"
 
             puts ""
 
