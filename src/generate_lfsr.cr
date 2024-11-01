@@ -1161,7 +1161,7 @@
             puts ""
 
             puts "    // register outputs"
-            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}c_clk,"
+            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}clk,"
             puts "             #{polarity?(reset_polarity, pos: "posedge ", neg: "negedge ")}#{reset_symbol})"
             puts "    begin"
             puts "        if      (#{polarity?(reset_polarity, pos: "", neg: "~")}#{reset_symbol})"
