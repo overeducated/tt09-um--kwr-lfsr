@@ -860,7 +860,7 @@
             # puts "    reg         [#{lfsr_length_max - 1}:0]    lfsr_value_prev;"
             # puts "    reg                   lfsr_valid_prev;"
 
-            puts ""
+            # puts ""
 
             puts "    always @(*)"
             puts "    begin"
@@ -1089,11 +1089,12 @@
             puts "    // constant outputs"
 
             puts "    assign    uio_oe         = UIO_OE;"
+            # puts "    assign    _unused        = &{ena, &uio_in, 1'b0};"
             # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], 1'b0};"
             # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], #{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}, #{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}, 1'b0};"
-            # puts "    assign    _u0            = &(ena, &uio_in, 1'b0);"
-            # puts "    assign    _u1            = &(#{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)});"
-            # puts "    assign    _u1            = &(#{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)});"
+            # puts "    assign    _u0            = &{ena, &uio_in, 1'b0};"
+            # puts "    assign    _u1            = &{#{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}};"
+            # puts "    assign    _u2            = &{#{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}};"
             # puts "    assign    _unused        = &{_u0, _u1, _u2};"
 
             puts ""
@@ -1161,7 +1162,7 @@
             puts ""
 
             puts "    // register outputs"
-            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}clk,"
+            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}c_clk,"
             puts "             #{polarity?(reset_polarity, pos: "posedge ", neg: "negedge ")}#{reset_symbol})"
             puts "    begin"
             puts "        if      (#{polarity?(reset_polarity, pos: "", neg: "~")}#{reset_symbol})"
