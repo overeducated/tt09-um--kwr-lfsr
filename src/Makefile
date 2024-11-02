@@ -1,6 +1,6 @@
 LFSR_GEN_OPTS	= 	-Hv                      \
 			-i1                      \
-			-n32                     \
+			-n16                     \
 			-C +clk                  \
 			-R -rst_n                \
 			-L lfsr                  \
@@ -8,6 +8,8 @@ LFSR_GEN_OPTS	= 	-Hv                      \
 			--generate header        \
 			--generate modules       \
 			--generate logic
+
+			# -n32                     \slash…
 
 LFSR_TEST_LFSR	=	--generate test_lfsr
 
