@@ -1,6 +1,6 @@
 LFSR_GEN_OPTS	= 	-Hv                      \
 			-i1                      \
-			-n16                     \
+			-n8                      \
 			-C +clk                  \
 			-R -rst_n                \
 			-L lfsr                  \

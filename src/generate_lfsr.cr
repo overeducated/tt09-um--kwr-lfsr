@@ -750,36 +750,36 @@
                     # which could be done quicker by testing for index inclusion in the taps array
                     # but … this version seems to work … which is good enough for now!
 
-                    mask  = "0" * lfsr_length_max
+                    mask  = "0" * lfsr_length_bound
 
                     # **** the tables use 1-based taps, thus SIZE..1, not (SIZE-1)..0
-                    taps.each { | t | mask  = mask.sub(lfsr_length_max - t, "1"); }
+                    taps.each { | t | mask  = mask.sub(lfsr_length_bound - t, "1"); }
 
                     # kwr::HACK!!!! fixes layout for two digits…
                     if (i < 10)
-                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = #{valid}; end"
+                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value   = #{lfsr_length_bound}'b#{mask}; mask_valid  = #{valid}; end"
                     else
-                        puts  "               #{lfsr_length_size}'d#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = #{valid}; end"
+                        puts  "               #{lfsr_length_size}'d#{i} : begin mask_value   = #{lfsr_length_bound}'b#{mask}; mask_valid  = #{valid}; end"
                     end # if
                 end # do
 
                 out_lb  = in_ub + 1
-                out_ub  = lfsr_length_bound - 1
+                out_ub  = lfsr_length_max - 1
 
-                #mask    = "x" * lfsr_length_max                                                  # could we get hugely-better results with casex and "x"?
-                mask    = "0" * lfsr_length_max
+                #mask    = "x" * lfsr_length_bound                                                  # could we get hugely-better results with casex and "x"?
+                mask    = "0" * lfsr_length_bound
 
                 out_lb.upto(out_ub) \
                 do | i |
                     # kwr::HACK!!!! fixes layout for two digits…
                     if (i < 10)
-                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
+                        puts "               #{lfsr_length_size}'d0#{i} : begin mask_value   = #{lfsr_length_bound}'b#{mask}; mask_valid  = 0; end"
                     else
-                        puts "               #{lfsr_length_size}'d#{i} : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
+                        puts "               #{lfsr_length_size}'d#{i} : begin mask_value   = #{lfsr_length_bound}'b#{mask}; mask_valid  = 0; end"
                     end # if
                 end # do
 
-                puts "             default : begin mask_value   = #{lfsr_length_max}'b#{mask}; mask_valid  = 0; end"
+                puts "             default : begin mask_value   = #{lfsr_length_bound}'b#{mask}; mask_valid  = 0; end"
                 puts "        endcase"
 # puts "$display(#{DQ}$$$$ n_taps=#{n_taps} lfsr_length=%d, mask_value=0b%064b mask_valid=0b%b#{DQ}, lfsr_length, mask_value, mask_valid);"
                 puts "    end // always"
@@ -995,15 +995,16 @@
         ##################
 
         def self.generate_logic(gen_opts) : Nil
-            clock_symbol      = gen_opts.clock_symbol
-            clock_polarity    = gen_opts.clock_polarity
+            clock_symbol       = gen_opts.clock_symbol
+            clock_polarity     = gen_opts.clock_polarity
 
-            reset_symbol      = gen_opts.reset_symbol
-            reset_polarity    = gen_opts.reset_polarity
+            reset_symbol       = gen_opts.reset_symbol
+            reset_polarity     = gen_opts.reset_polarity
 
-            lfsr_length_max   = gen_opts.lfsr_length_max
-            lfsr_length_size  = gen_opts.lfsr_length_size
-            lfsr_init_value   = gen_opts.lfsr_init_value
+            lfsr_length_max    = gen_opts.lfsr_length_max
+            lfsr_length_bound  = gen_opts.lfsr_length_bound
+            lfsr_length_size   = gen_opts.lfsr_length_size
+            lfsr_init_value    = gen_opts.lfsr_init_value
 
             puts "// ////////////////////////////////////////////////////////////////////////"
             puts "// @BEGIN Logic\n"
@@ -1091,7 +1092,8 @@
             puts "    // constant outputs"
 
             puts "    assign    uio_oe         = UIO_OE;"
-            puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], 1'b0};"
+
+            puts "    assign    _unused        = &{ena, &uio_in, 1'b0};"
             # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], 1'b0};"
             # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], #{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}, #{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}, 1'b0};"
             # puts "    assign    _u0            = &{ena, &uio_in, 1'b0};"
@@ -1178,8 +1180,36 @@
             puts "        else"
             puts "        begin"
             puts "            uio_out[UIO_OUT_VALID]                      <= valid;"
-            puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= value[14:08];"
-            puts "            uo_out                                      <= value[07:00];"
+
+            if    (lfsr_length_bound >= 15)
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= value[14:08];"
+                puts "            uo_out                                      <= value[07:00];"
+            elsif (lfsr_length_bound ==  14)
+                puts "            uio_out[UIO_OUT_VALUE_14]                   <= 0;"
+                puts "            uio_out[UIO_OUT_VALUE_13:UIO_OUT_VALUE_08]  <= value[13:08];"
+                puts "            uo_out                                      <= value[07:00];"
+            elsif (lfsr_length_bound >   10)
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_#{lfsr_length_bound}]  <= 0;"
+                puts "            uio_out[UIO_OUT_VALUE_#{lfsr_length_bound - 1}:UIO_OUT_VALUE_08]  <= value[#{lfsr_length_bound - 1}:08];"
+                puts "            uo_out                                      <= value[07:00];"
+            elsif (lfsr_length_bound ==  10)
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_10]  <= 0;"
+                puts "            uio_out[UIO_OUT_VALUE_09:UIO_OUT_VALUE_08]  <= value[09:08];"
+                puts "            uo_out                                      <= value[07:00];"
+            elsif (lfsr_length_bound ==  9)
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_09]  <= 0;"
+                puts "            uio_out[UIO_OUT_VALUE_08]                   <= value[08];"
+                puts "            uo_out                                      <= value[07:00];"
+            elsif (lfsr_length_bound ==  8)
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
+                puts "            uio_out[UIO_OUT_VALUE_08]                   <= value[08];"
+                puts "            uo_out                                      <= value[07:00];"
+            else
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
+                puts "            uo_out                                      <= value[07:0#{lfsr_length_bound}];"
+                puts "            uo_out                                      <= value[0#{lfsr_length_bound - 1}:00];"
+            end # if
+
             puts "        end"
             puts "        // endif"
 
@@ -1415,12 +1445,12 @@
 
         #########
 
-        def self.test_logic_display_interface : Nil
+        def self.test_logic_display_interface(lfsr_length_size) : Nil
             puts ""
 
             puts "            $display(#{DQ}        clk      = 0b%b#{DQ}, clk);"
             puts "            $display(#{DQ}        rst_n    = 0b%b#{DQ}, rst_n);"
-            puts "            $display(#{DQ}        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b#{DQ}, ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]);"
+            puts "            $display(#{DQ}        ui_in    = 0b%08b    hold  = 0b%b    step = 0b%b    n_taps = 0b%b    length = 0b%05b#{DQ}, ui_in, ui_in[UI_IN_HOLD], ui_in[UI_IN_STEP], ui_in[UI_IN_N_TAPS], ui_in[UI_IN_LENGTH_#{lfsr_length_size - 1}:UI_IN_LENGTH_0]);"
             puts "            $display(#{DQ}        uio_in   = 0b%08b#{DQ}, uio_in);"
             puts "            $display(#{DQ}        uo_out   = 0b%08b                   value_l =           0b%08b#{DQ}, uo_out, uo_out[UO_OUT_VALUE_07:UO_OUT_VALUE_00]);"
             puts "            $display(#{DQ}        uio_out  = 0b%08b    valid = 0b%b    value_h = 0b%07b#{DQ}, uio_out, uio_out[UIO_OUT_VALID], uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]);"
@@ -1460,25 +1490,25 @@
 
         #########
 
-        def self.test_logic_assign_ui_in
+        def self.test_logic_assign_ui_in(lfsr_length_size)
             puts ""
 
             puts "            ui_in[UI_IN_HOLD]                     = hold;"
             puts "            ui_in[UI_IN_STEP]                     = step;"
             puts "            ui_in[UI_IN_N_TAPS]                   = n_taps;"
-            puts "            ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0]  = length;"
+            puts "            ui_in[UI_IN_LENGTH_#{lfsr_length_size - 1}:UI_IN_LENGTH_0]  = length;"
         end # defself.test_logic_assign_ui_in
 
         #########
 
-        def self.test_logic_cycle
+        def self.test_logic_cycle(lfsr_length_size)
             puts "            #50;"
             puts "            clk                                   = 1;"
 
             puts ""
 
             puts "            $display(#{DQ}^^^^ @ %d    <<<<<<<<<    <<<<<<<<<#{DQ},                                           cycle);"
-                              self.test_logic_display_interface
+                              self.test_logic_display_interface(lfsr_length_size)
 
             puts "            #50;"
             puts "            clk                                   = 0;"
@@ -1487,7 +1517,7 @@
 
             puts "            $display(#{DQ}xxxx @ %d                 ---------     ---------#{DQ},                             cycle);"
 
-                              self.test_logic_display_interface
+                              self.test_logic_display_interface(lfsr_length_size)
             puts "            $display(#{DQ}vvvv @ %d                          >>>>>>>>>     >>>>>>>>>#{DQ},                    cycle);"
         end # def self.test_logic_cycle
 
@@ -1586,6 +1616,9 @@
 
             #########
 
+            two_tap_length   = 5
+            four_tap_length  = 7        # was 11 but have been testing shorter lfsr lengths
+
             puts ""
 
             puts "    always"
@@ -1599,9 +1632,9 @@
             puts "            $display(#{DQ}~~~~ INIT    taps 2, length 7#{DQ});"
             puts "            hold                                  = 0;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
+                              self.test_logic_assign_ui_in(lfsr_length_size)
                               self.test_logic_reset
             puts "            $display(#{DQ}!!!! @ %d    Initialization completed     .........    .........    .........#{DQ}, cycle);"
             puts "        end"
@@ -1613,10 +1646,10 @@
             puts "            $display(#{DQ}~~~~ HOLD#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1626,10 +1659,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1639,10 +1672,10 @@
             puts "            $display(#{DQ}~~~~ HOLD#{DQ});"
             puts "            hold                                  = 0;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1652,10 +1685,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1665,10 +1698,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1678,10 +1711,10 @@
             puts "            $display(#{DQ}~~~~ HOLD#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1691,10 +1724,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1704,10 +1737,10 @@
             puts "            $display(#{DQ}~~~~ HOLD#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1717,10 +1750,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1730,10 +1763,10 @@
             puts "            $display(#{DQ}~~~~ RUN STEP#{DQ});"
             puts "            hold                                  = 0;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1743,10 +1776,10 @@
             puts "            $display(#{DQ}~~~~ RUN#{DQ});"
             puts "            hold                                  = 0;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1756,10 +1789,10 @@
             puts "            $display(#{DQ}~~~~ RUN STEP#{DQ});"
             puts "            hold                                  = 0;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1769,10 +1802,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1782,10 +1815,10 @@
             puts "            $display(#{DQ}~~~~ HOLD#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1796,10 +1829,10 @@
             puts "            $display(#{DQ}~~~~ HOLD STEP#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 1;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1809,10 +1842,10 @@
             puts "            $display(#{DQ}~~~~ HOLD#{DQ});"
             puts "            hold                                  = 1;"
             puts "            step                                  = 0;"
-            puts "            length                                = 7;"
+            puts "            length                                = #{two_tap_length};"
             puts "            n_taps                                = 0;"
-                              self.test_logic_assign_ui_in
-                              self.test_logic_cycle
+                              self.test_logic_assign_ui_in(lfsr_length_size)
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
@@ -1823,9 +1856,9 @@
             puts "            $display(#{DQ}~~~~ INIT    taps 4 length 11#{DQ});"
             puts "            hold                                  = 0;"
             puts "            step                                  = 0;"
-            puts "            length                                = 11;"
+            puts "            length                                = #{four_tap_length};"
             puts "            n_taps                                = 1;"
-                              self.test_logic_assign_ui_in
+                              self.test_logic_assign_ui_in(lfsr_length_size)
                               self.test_logic_reset
             puts "            $display(#{DQ}!!!! @ %d    Reinitialization completed     .........    .........    .........#{DQ}, cycle);"
             puts "        end"
@@ -1836,7 +1869,7 @@
             puts "        begin"
 
             puts "            $display(#{DQ}#### @ %d    ##########{DQ}, cycle);"
-                              self.test_logic_display_interface
+                              self.test_logic_display_interface(lfsr_length_size)
 
             puts ""
 
@@ -1848,14 +1881,14 @@
 
             puts "        else if (cycle  >  50)"
             puts "        begin"
-                              self.test_logic_cycle
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
 
             puts ""
 
             puts "        else if (cycle > 0)"
             puts "        begin"
-                              self.test_logic_cycle
+                              self.test_logic_cycle(lfsr_length_size)
             puts "        end"
             puts "        // endif"
 
@@ -2156,7 +2189,7 @@
                 #     options.lfsr_length_max    = 64
 
                 else
-                    puts "LFSR (maximum) width #{wtest} is greater than 64 (exceeds 6 bits) which is not supported by the current RTL model"
+                    puts "LFSR (maximum) width #{wtest} is greater than 32 (exceeds 5 bits) which is not supported by the current RTL model"
                 end # if
             end # if
 

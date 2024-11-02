@@ -37,32 +37,24 @@
 
 module generate_mask_fibonacci_2_taps
 (
-    input  wire [3:0]    lfsr_length,
+    input  wire [2:0]    lfsr_length,
 
-    output reg  [15:0]   mask_value,
+    output reg  [7:0]   mask_value,
     output reg           mask_valid
 );
 
     always @(*)
     begin
         case (lfsr_length)
-               4'd00 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd01 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd02 : begin mask_value   = 16'b0000000000000011; mask_valid  = 1; end
-               4'd03 : begin mask_value   = 16'b0000000000000110; mask_valid  = 1; end
-               4'd04 : begin mask_value   = 16'b0000000000001100; mask_valid  = 1; end
-               4'd05 : begin mask_value   = 16'b0000000000010100; mask_valid  = 1; end
-               4'd06 : begin mask_value   = 16'b0000000000110000; mask_valid  = 1; end
-               4'd07 : begin mask_value   = 16'b0000000001100000; mask_valid  = 1; end
-               4'd08 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd09 : begin mask_value   = 16'b0000000100010000; mask_valid  = 1; end
-               4'd10 : begin mask_value   = 16'b0000001001000000; mask_valid  = 1; end
-               4'd11 : begin mask_value   = 16'b0000010100000000; mask_valid  = 1; end
-               4'd12 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd13 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd14 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd15 : begin mask_value   = 16'b0110000000000000; mask_valid  = 1; end
-             default : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               3'd00 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd01 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd02 : begin mask_value   = 8'b00000011; mask_valid  = 1; end
+               3'd03 : begin mask_value   = 8'b00000110; mask_valid  = 1; end
+               3'd04 : begin mask_value   = 8'b00001100; mask_valid  = 1; end
+               3'd05 : begin mask_value   = 8'b00010100; mask_valid  = 1; end
+               3'd06 : begin mask_value   = 8'b00110000; mask_valid  = 1; end
+               3'd07 : begin mask_value   = 8'b01100000; mask_valid  = 1; end
+             default : begin mask_value   = 8'b00000000; mask_valid  = 0; end
         endcase
     end // always
 
@@ -72,32 +64,24 @@ endmodule // generate_mask_fibonacci_
 
 module generate_mask_fibonacci_4_taps
 (
-    input  wire [3:0]    lfsr_length,
+    input  wire [2:0]    lfsr_length,
 
-    output reg  [15:0]   mask_value,
+    output reg  [7:0]   mask_value,
     output reg           mask_valid
 );
 
     always @(*)
     begin
         case (lfsr_length)
-               4'd00 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd01 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd02 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd03 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd04 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd05 : begin mask_value   = 16'b0000000000011110; mask_valid  = 1; end
-               4'd06 : begin mask_value   = 16'b0000000000110110; mask_valid  = 1; end
-               4'd07 : begin mask_value   = 16'b0000000001111000; mask_valid  = 1; end
-               4'd08 : begin mask_value   = 16'b0000000010111000; mask_valid  = 1; end
-               4'd09 : begin mask_value   = 16'b0000000110110000; mask_valid  = 1; end
-               4'd10 : begin mask_value   = 16'b0000001101100000; mask_valid  = 1; end
-               4'd11 : begin mask_value   = 16'b0000011101000000; mask_valid  = 1; end
-               4'd12 : begin mask_value   = 16'b0000110010100000; mask_valid  = 1; end
-               4'd13 : begin mask_value   = 16'b0001101100000000; mask_valid  = 1; end
-               4'd14 : begin mask_value   = 16'b0011010100000000; mask_valid  = 1; end
-               4'd15 : begin mask_value   = 16'b0111010000000000; mask_valid  = 1; end
-             default : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               3'd00 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd01 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd02 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd03 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd04 : begin mask_value   = 8'b00000000; mask_valid  = 0; end
+               3'd05 : begin mask_value   = 8'b00011110; mask_valid  = 1; end
+               3'd06 : begin mask_value   = 8'b00110110; mask_valid  = 1; end
+               3'd07 : begin mask_value   = 8'b01111000; mask_valid  = 1; end
+             default : begin mask_value   = 8'b00000000; mask_valid  = 0; end
         endcase
     end // always
 
@@ -109,14 +93,14 @@ module lfsr_fibonacci
 (
     input  wire           clk,
     input  wire           rst_n,
-    input  wire  [3:0]    lfsr_length,
+    input  wire  [2:0]    lfsr_length,
     input  wire           lfsr_n_taps,
 
-    output reg  [15:0]    lfsr_value,
+    output reg  [7:0]    lfsr_value,
     output reg            lfsr_valid
 );
 
-    wire        [15:0]    mask_value_2_taps;
+    wire        [7:0]    mask_value_2_taps;
     wire                  mask_valid_2_taps;
 
     generate_mask_fibonacci_2_taps    gmf2t
@@ -126,7 +110,7 @@ module lfsr_fibonacci
         .mask_valid(mask_valid_2_taps)
     );
 
-    wire        [15:0]    mask_value_4_taps;
+    wire        [7:0]    mask_value_4_taps;
     wire                  mask_valid_4_taps;
 
     generate_mask_fibonacci_4_taps    gmf4t
@@ -136,7 +120,7 @@ module lfsr_fibonacci
         .mask_valid(mask_valid_4_taps)
     );
 
-    reg         [15:0]    mask_value;
+    reg         [7:0]    mask_value;
     reg                   mask_valid;
 
     always @(*)
@@ -160,19 +144,19 @@ module lfsr_fibonacci
         if      (~rst_n)
         begin
             // initialize current value/valid
-            lfsr_value       <= 16'd1;
+            lfsr_value       <= 8'd1;
             lfsr_valid       <= 1;
         end
         else if (~mask_valid)
         begin
             // force current value/valid to invalid
-            lfsr_value  <= 16'd0;
+            lfsr_value  <= 8'd0;
             lfsr_valid  <= 0;
         end
         else
         begin
             // shift the previous value and add in the computed (reduced) feedback value, set valid correctly (already verified mask is valid)
-            lfsr_value       <= { lfsr_value[14:0], ^(lfsr_value & mask_value) };
+            lfsr_value       <= { lfsr_value[6:0], ^(lfsr_value & mask_value) };
             lfsr_valid       <= 1;
         end
         // endif
@@ -218,7 +202,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 
 // ////////////////////////////////////////////////////////////////////////
 
-    reg         [3:0]     length;
+    reg         [2:0]     length;
     reg                   n_taps;
     reg                   hold;
     reg                   step;
@@ -226,7 +210,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
     reg                   c_clk;
     reg                   c_clk_mask;
 
-    wire        [15:0]    value;
+    wire        [7:0]    value;
     wire                  valid;
 
     lfsr_fibonacci    lfsr
@@ -275,7 +259,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 
     // constant outputs
     assign    uio_oe         = UIO_OE;
-    assign    _unused        = &{ena, &uio_in, &value[15:14], 1'b0};
+    assign    _unused        = &{ena, &uio_in, 1'b0};
 
     // ////////////////////////////////////////////////////////////////////////
     // get inputs
@@ -285,7 +269,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
         hold                = ui_in[UI_IN_HOLD];
         step                = ui_in[UI_IN_STEP];
         n_taps              = ui_in[UI_IN_N_TAPS];
-        length              = ui_in[UI_IN_LENGTH_3:UI_IN_LENGTH_0];
+        length              = ui_in[UI_IN_LENGTH_2:UI_IN_LENGTH_0];
     end // always
 
     // ////////////////////////////////////////////////////////////////////////
@@ -336,7 +320,8 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
         else
         begin
             uio_out[UIO_OUT_VALID]                      <= valid;
-            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= value[14:08];
+            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;
+            uio_out[UIO_OUT_VALUE_08]                   <= value[08];
             uo_out                                      <= value[07:00];
         end
         // endif
