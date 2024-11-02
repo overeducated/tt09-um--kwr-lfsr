@@ -1184,15 +1184,15 @@
             if    (lfsr_length_bound >= 15)
                 puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= value[14:08];"
                 puts "            uo_out                                      <= value[07:00];"
-            elsif (lfsr_length_bound ==  14)
+            elsif (lfsr_length_bound == 14)
                 puts "            uio_out[UIO_OUT_VALUE_14]                   <= 0;"
                 puts "            uio_out[UIO_OUT_VALUE_13:UIO_OUT_VALUE_08]  <= value[13:08];"
                 puts "            uo_out                                      <= value[07:00];"
-            elsif (lfsr_length_bound >   10)
+            elsif (lfsr_length_bound >  10)
                 puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_#{lfsr_length_bound}]  <= 0;"
                 puts "            uio_out[UIO_OUT_VALUE_#{lfsr_length_bound - 1}:UIO_OUT_VALUE_08]  <= value[#{lfsr_length_bound - 1}:08];"
                 puts "            uo_out                                      <= value[07:00];"
-            elsif (lfsr_length_bound ==  10)
+            elsif (lfsr_length_bound == 10)
                 puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_10]  <= 0;"
                 puts "            uio_out[UIO_OUT_VALUE_09:UIO_OUT_VALUE_08]  <= value[09:08];"
                 puts "            uo_out                                      <= value[07:00];"
@@ -1202,8 +1202,11 @@
                 puts "            uo_out                                      <= value[07:00];"
             elsif (lfsr_length_bound ==  8)
                 puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
-                puts "            uio_out[UIO_OUT_VALUE_08]                   <= value[08];"
                 puts "            uo_out                                      <= value[07:00];"
+            elsif (lfsr_length_bound ==  7)
+                puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
+                puts "            uo_out                                      <= value[07];"
+                puts "            uo_out                                      <= value[06:00];"
             else
                 puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
                 puts "            uo_out                                      <= value[07:0#{lfsr_length_bound}];"

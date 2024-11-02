@@ -321,7 +321,6 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
         begin
             uio_out[UIO_OUT_VALID]                      <= valid;
             uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;
-            uio_out[UIO_OUT_VALUE_08]                   <= value[08];
             uo_out                                      <= value[07:00];
         end
         // endif
