@@ -275,7 +275,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 
     // constant outputs
     assign    uio_oe         = UIO_OE;
-    assign    _unused        = &{ena, &uio_in, &value[31:14], 1'b0};
+    assign    _unused        = &{ena, &uio_in, &value[15:14], 1'b0};
 
     // ////////////////////////////////////////////////////////////////////////
     // get inputs
