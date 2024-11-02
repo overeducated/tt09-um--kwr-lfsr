@@ -723,7 +723,7 @@
                 puts "    begin"
 
                 # kwr::HACK--- should probably fix the width parameter more cleanly, but this is the simplest hack that doesn't add more generation state/inconsistency…
-                puts "        case (lfsr_length & #{lfsr_length_size}'d#{lfsr_length_max - 1})"
+                puts "        case (lfsr_length)"
 
                 in_lb   = 0
                 in_ub   = imin(lfsr_length_max, lfsr_length_bound) - 1
@@ -1111,7 +1111,7 @@
             puts "        hold                = ui_in[UI_IN_HOLD];"
             puts "        step                = ui_in[UI_IN_STEP];"
             puts "        n_taps              = ui_in[UI_IN_N_TAPS];"
-            puts "        length              = ui_in[UI_IN_LENGTH_4:UI_IN_LENGTH_0];"
+            puts "        length              = ui_in[UI_IN_LENGTH_#{lfsr_length_size - 1}:UI_IN_LENGTH_0];"
             puts "    end // always"
 
             puts ""
@@ -2132,23 +2132,23 @@
                 # but i don't wan't to figure out how to do it (and debug it) in crystal right now.
 
                 if    (wtest <=  2)
-                    # options.lfsr_length_size   =  1
+                    options.lfsr_length_size   =  1
                     options.lfsr_length_max    =  2
 
                 elsif (wtest <=  4)
-                    # options.lfsr_length_size   =  2
+                    options.lfsr_length_size   =  2
                     options.lfsr_length_max    =  4
 
                 elsif (wtest <=  8)
-                    # options.lfsr_length_size   =  3
+                    options.lfsr_length_size   =  3
                     options.lfsr_length_max    =  8
 
                 elsif (wtest <= 16)
-                    # options.lfsr_length_size   =  4
+                    options.lfsr_length_size   =  4
                     options.lfsr_length_max    = 16
 
                 elsif (wtest <= 32)
-                    # options.lfsr_length_size   =  5
+                    options.lfsr_length_size   =  5
                     options.lfsr_length_max    = 32
 
                 # elsif (wtest <= 64)
@@ -2158,9 +2158,6 @@
                 else
                     puts "LFSR (maximum) width #{wtest} is greater than 64 (exceeds 6 bits) which is not supported by the current RTL model"
                 end # if
-
-                # kwr::HACK--- fix length size to 5 for simplicity
-                options.lfsr_length_size   =  5
             end # if
 
             generated  = false
