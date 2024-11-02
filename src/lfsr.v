@@ -37,7 +37,7 @@
 
 module generate_mask_fibonacci_2_taps
 (
-    input  wire [3:0]    lfsr_length,
+    input  wire [4:0]    lfsr_length,
 
     output reg  [15:0]   mask_value,
     output reg           mask_valid
@@ -45,23 +45,23 @@ module generate_mask_fibonacci_2_taps
 
     always @(*)
     begin
-        case (lfsr_length)
-               4'd00 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd01 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd02 : begin mask_value   = 16'b0000000000000011; mask_valid  = 1; end
-               4'd03 : begin mask_value   = 16'b0000000000000110; mask_valid  = 1; end
-               4'd04 : begin mask_value   = 16'b0000000000001100; mask_valid  = 1; end
-               4'd05 : begin mask_value   = 16'b0000000000010100; mask_valid  = 1; end
-               4'd06 : begin mask_value   = 16'b0000000000110000; mask_valid  = 1; end
-               4'd07 : begin mask_value   = 16'b0000000001100000; mask_valid  = 1; end
-               4'd08 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd09 : begin mask_value   = 16'b0000000100010000; mask_valid  = 1; end
-               4'd10 : begin mask_value   = 16'b0000001001000000; mask_valid  = 1; end
-               4'd11 : begin mask_value   = 16'b0000010100000000; mask_valid  = 1; end
-               4'd12 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd13 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd14 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd15 : begin mask_value   = 16'b0110000000000000; mask_valid  = 1; end
+        case (lfsr_length & 5'd15)
+               5'd00 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd01 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd02 : begin mask_value   = 16'b0000000000000011; mask_valid  = 1; end
+               5'd03 : begin mask_value   = 16'b0000000000000110; mask_valid  = 1; end
+               5'd04 : begin mask_value   = 16'b0000000000001100; mask_valid  = 1; end
+               5'd05 : begin mask_value   = 16'b0000000000010100; mask_valid  = 1; end
+               5'd06 : begin mask_value   = 16'b0000000000110000; mask_valid  = 1; end
+               5'd07 : begin mask_value   = 16'b0000000001100000; mask_valid  = 1; end
+               5'd08 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd09 : begin mask_value   = 16'b0000000100010000; mask_valid  = 1; end
+               5'd10 : begin mask_value   = 16'b0000001001000000; mask_valid  = 1; end
+               5'd11 : begin mask_value   = 16'b0000010100000000; mask_valid  = 1; end
+               5'd12 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd13 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd14 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd15 : begin mask_value   = 16'b0110000000000000; mask_valid  = 1; end
              default : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
         endcase
     end // always
@@ -72,7 +72,7 @@ endmodule // generate_mask_fibonacci_
 
 module generate_mask_fibonacci_4_taps
 (
-    input  wire [3:0]    lfsr_length,
+    input  wire [4:0]    lfsr_length,
 
     output reg  [15:0]   mask_value,
     output reg           mask_valid
@@ -80,23 +80,23 @@ module generate_mask_fibonacci_4_taps
 
     always @(*)
     begin
-        case (lfsr_length)
-               4'd00 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd01 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd02 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd03 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd04 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
-               4'd05 : begin mask_value   = 16'b0000000000011110; mask_valid  = 1; end
-               4'd06 : begin mask_value   = 16'b0000000000110110; mask_valid  = 1; end
-               4'd07 : begin mask_value   = 16'b0000000001111000; mask_valid  = 1; end
-               4'd08 : begin mask_value   = 16'b0000000010111000; mask_valid  = 1; end
-               4'd09 : begin mask_value   = 16'b0000000110110000; mask_valid  = 1; end
-               4'd10 : begin mask_value   = 16'b0000001101100000; mask_valid  = 1; end
-               4'd11 : begin mask_value   = 16'b0000011101000000; mask_valid  = 1; end
-               4'd12 : begin mask_value   = 16'b0000110010100000; mask_valid  = 1; end
-               4'd13 : begin mask_value   = 16'b0001101100000000; mask_valid  = 1; end
-               4'd14 : begin mask_value   = 16'b0011010100000000; mask_valid  = 1; end
-               4'd15 : begin mask_value   = 16'b0111010000000000; mask_valid  = 1; end
+        case (lfsr_length & 5'd15)
+               5'd00 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd01 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd02 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd03 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd04 : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
+               5'd05 : begin mask_value   = 16'b0000000000011110; mask_valid  = 1; end
+               5'd06 : begin mask_value   = 16'b0000000000110110; mask_valid  = 1; end
+               5'd07 : begin mask_value   = 16'b0000000001111000; mask_valid  = 1; end
+               5'd08 : begin mask_value   = 16'b0000000010111000; mask_valid  = 1; end
+               5'd09 : begin mask_value   = 16'b0000000110110000; mask_valid  = 1; end
+               5'd10 : begin mask_value   = 16'b0000001101100000; mask_valid  = 1; end
+               5'd11 : begin mask_value   = 16'b0000011101000000; mask_valid  = 1; end
+               5'd12 : begin mask_value   = 16'b0000110010100000; mask_valid  = 1; end
+               5'd13 : begin mask_value   = 16'b0001101100000000; mask_valid  = 1; end
+               5'd14 : begin mask_value   = 16'b0011010100000000; mask_valid  = 1; end
+               5'd15 : begin mask_value   = 16'b0111010000000000; mask_valid  = 1; end
              default : begin mask_value   = 16'b0000000000000000; mask_valid  = 0; end
         endcase
     end // always
@@ -109,7 +109,7 @@ module lfsr_fibonacci
 (
     input  wire           clk,
     input  wire           rst_n,
-    input  wire  [3:0]    lfsr_length,
+    input  wire  [4:0]    lfsr_length,
     input  wire           lfsr_n_taps,
 
     output reg  [15:0]    lfsr_value,
@@ -218,7 +218,7 @@ module tt_um__kwr_lfsr__top // top-level (and business) logic
 
 // ////////////////////////////////////////////////////////////////////////
 
-    reg         [3:0]     length;
+    reg         [4:0]     length;
     reg                   n_taps;
     reg                   hold;
     reg                   step;
