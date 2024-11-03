@@ -46,7 +46,7 @@ clean:
 # ########################################################################
 
 .PHONY:		release
-release:	lfsr
+release:
 	-[ ! -f RELEASE ] && make clean
 	make TEST_OPTIONS= lfsr.v
 	touch RELEASE
@@ -54,7 +54,7 @@ release:	lfsr
 # ##################
 
 .PHONY:		test_lfsr
-test_lfsr:	lfsr
+test_lfsr:
 	-[ ! -f TEST_LFSR ] && make clean
 	make TEST_OPTIONS="$(LFSR_TEST_LFSR)" lfsr
 	touch TEST_LFSR
@@ -62,9 +62,9 @@ test_lfsr:	lfsr
 # ##################
 
 .PHONY:		test_logic
-test_logic:	lfsr.out
+test_logic:
 	-[ ! -f TEST_LOGIC ] && make clean
-	make TEST_OPTIONS="$(LFSR_TEST_LOGIC)" lfsr.out
+	make TEST_OPTIONS="$(LFSR_TEST_LOGIC)" lfsr
 	touch TEST_LOGIC
 
 # ########################################################################
@@ -81,13 +81,13 @@ lfsr.v:		generate_lfsr
 
 lfsr:		lfsr.v
 	iverilog -v -o $@ $< >& $@.log
-
-# ##################
-
-lfsr.out:	lfsr
 	./lfsr >& lfsr.out
 	grep "::::" lfsr.out | cut -f5- -d: > lfsr.cocotb
 	cat ../test/test.py.in lfsr.cocotb > ../test/test.py
+
+# ##################
+
+# lfsr.out:	lfsr
 
 # ########################################################################
 # ########################################################################

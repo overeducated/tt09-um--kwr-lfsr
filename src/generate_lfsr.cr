@@ -1625,6 +1625,10 @@
             puts "        if (cycle > 1)"
             puts "        begin"
             puts "            $display(#{DQ}::::#{DQ});"
+            puts "            $display(#{DQ}::::    dut.ui_in.value = 8'b%08b#{DQ}, ui_in);"
+
+            puts ""
+
             puts "            $display(#{DQ}::::    await  ClockCycles(dut.clk, 1)#{DQ});"
             puts "            $display(#{DQ}::::    assert dut.uio_out.value == 0x%02x#{DQ}, uio_out);"
             puts "            $display(#{DQ}::::    assert  dut.uo_out.value == 0x%02x#{DQ},  uo_out);"
