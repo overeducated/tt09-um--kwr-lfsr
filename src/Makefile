@@ -31,7 +31,8 @@ all:
 # ########################################################################
 
 .PHONY:		push
-push:		release
+push:
+	make release
 	git add --all
 	git commit -m "pushing release"
 	git push
