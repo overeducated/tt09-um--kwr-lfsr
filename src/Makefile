@@ -83,7 +83,7 @@ lfsr:		lfsr.v
 	iverilog -v -o $@ $< >& $@.log
 	./lfsr >& lfsr.out
 	grep "::::" lfsr.out | cut -f5- -d: > lfsr.cocotb
-	cat ../test/test.py.in lfsr.cocotb > ../test/test.py
+	# cat ../test/test.py.in lfsr.cocotb > ../test/test.py
 
 # ##################
 
