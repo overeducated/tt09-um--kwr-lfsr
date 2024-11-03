@@ -45,6 +45,7 @@ clean:
 
 # ########################################################################
 
+.PHONY:		release
 release:	lfsr
 	-[ ! -f RELEASE ] && make clean
 	make TEST_OPTIONS= lfsr.v
@@ -52,14 +53,16 @@ release:	lfsr
 
 # ##################
 
+.PHONY:		test_lfsr
 test_lfsr:	lfsr
 	-[ ! -f TEST_LFSR ] && make clean
-	make TEST_OPTIONS="$(LFSR_TEST_LFSR)" lfsr.out
+	make TEST_OPTIONS="$(LFSR_TEST_LFSR)" lfsr
 	touch TEST_LFSR
 
 # ##################
 
-test_logic:	lfsr
+.PHONY:		test_logic
+test_logic:	lfsr.out
 	-[ ! -f TEST_LOGIC ] && make clean
 	make TEST_OPTIONS="$(LFSR_TEST_LOGIC)" lfsr.out
 	touch TEST_LOGIC
@@ -83,7 +86,7 @@ lfsr:		lfsr.v
 
 lfsr.out:	lfsr
 	./lfsr >& lfsr.out
-	grep :::: lfsr.out | cut -f5- -d: > lfsr.cocotb
+	grep "::::" lfsr.out | cut -f5- -d: > lfsr.cocotb
 	cat ../test/test.py.in lfsr.cocotb > ../test/test.py
 
 # ########################################################################

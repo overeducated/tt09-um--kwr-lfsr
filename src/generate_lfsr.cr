@@ -1599,23 +1599,41 @@
 
             puts ""
 
-            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}#{clock_symbol})"
-            puts "    begin"
-            puts "        $display(#{DQ}::::#{DQ});"
-            puts "        $display(#{DQ}::::    await  ClockCycles(dut.clk, 1)#{DQ});"
-            puts "        $display(#{DQ}::::    assert dut.uio_out.value == 0x%02x#{DQ}, uio_out);"
-            puts "        $display(#{DQ}::::    assert  dut.uo_out.value == 0x%02x#{DQ},  uo_out);"
-            # puts "        $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
-            # puts "        $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
-            puts "    end // always"
+            # puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}#{clock_symbol})"
+            # puts "    begin"
+            # puts "        if (cycle > 0)"
+            # puts "        begin"
+            # puts "            $display(#{DQ}::::#{DQ});"
+            # puts "            $display(#{DQ}::::    await  ClockCycles(dut.clk, 1)#{DQ});"
+            # puts "            $display(#{DQ}::::    assert dut.uio_out.value == 0x%02x#{DQ}, uio_out);"
+            # puts "            $display(#{DQ}::::    assert  dut.uo_out.value == 0x%02x#{DQ},  uo_out);"
+            # # puts "            $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
+            # # puts "            $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
+            # puts "        end"
+            # puts "        // endif"
+            # puts "    end // always"
 
-            puts ""
-
+            # puts ""
 
             puts "    always"
             puts "    begin"
 
             puts "        $display(#{DQ}==================================== cycle = %d ====================================#{DQ}, cycle);"
+
+            puts "        $display(#{DQ}// dump begin#{DQ});"
+
+            puts "        if (cycle > 1)"
+            puts "        begin"
+            puts "            $display(#{DQ}::::#{DQ});"
+            puts "            $display(#{DQ}::::    await  ClockCycles(dut.clk, 1)#{DQ});"
+            puts "            $display(#{DQ}::::    assert dut.uio_out.value == 0x%02x#{DQ}, uio_out);"
+            puts "            $display(#{DQ}::::    assert  dut.uo_out.value == 0x%02x#{DQ},  uo_out);"
+            # # puts "            $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
+            puts "        end"
+            puts "        // endif"
+
+            # not quite sure why if…end if…else…end fails to execute without this intervening non-if construct; bad verilog, no silicon biscuit.
+            puts "        $display(#{DQ}// dump end#{DQ});"
 
             puts "        if      (cycle ==   0)"
             puts "        begin"

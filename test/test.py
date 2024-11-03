@@ -34,10 +34,6 @@ async def test_project(dut):
     assert  dut.uo_out.value == 0x00
 
     await  ClockCycles(dut.clk, 1)
-    assert dut.uio_out.value == 0x00
-    assert  dut.uo_out.value == 0x00
-
-    await  ClockCycles(dut.clk, 1)
     assert dut.uio_out.value == 0x80
     assert  dut.uo_out.value == 0x01
 
@@ -266,6 +262,10 @@ async def test_project(dut):
     assert  dut.uo_out.value == 0x09
 
     await  ClockCycles(dut.clk, 1)
+    assert dut.uio_out.value == 0xf5
+    assert  dut.uo_out.value == 0x09
+
+    await  ClockCycles(dut.clk, 1)
     assert dut.uio_out.value == 0x00
     assert  dut.uo_out.value == 0x00
 
@@ -424,3 +424,7 @@ async def test_project(dut):
     await  ClockCycles(dut.clk, 1)
     assert dut.uio_out.value == 0xf6
     assert  dut.uo_out.value == 0xef
+
+    await  ClockCycles(dut.clk, 1)
+    assert dut.uio_out.value == 0xed
+    assert  dut.uo_out.value == 0xdf
