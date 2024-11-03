@@ -1,8 +1,8 @@
 generate_lfsr
-generate_lfsr.dwarf
 lfsr
-lfsr.out
-lfsr.vcd
+*.dwarf
+*.out
+*.vcd
 RELEASE
 TEST_LFSR
 TEST_LOGIC

@@ -1064,7 +1064,7 @@
 
             # puts "    reg                   clock_mask;"
             puts "    reg                   c_clk;"
-            puts "    reg                   c_clk_mask;"
+            puts "    reg                   c_clk_ena;"
 
             puts ""
 
@@ -1090,30 +1090,25 @@
             puts ""
 
             puts "    // constant outputs"
-
             puts "    assign    uio_oe         = UIO_OE;"
-
             puts "    assign    _unused        = &{ena, &uio_in, 1'b0};"
-            # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], 1'b0};"
-            # # puts "    assign    _unused        = &{ena, &uio_in, &value[#{lfsr_length_max - 1}:14], #{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}, #{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}, 1'b0};"
-            # puts "    assign    _u0            = &{ena, &uio_in, 1'b0};"
-            # puts "    assign    _u1            = &{#{self.expand_symbol_range(symbol: "&UI_IN_LENGTH", from: 1, to: 3)}};"
-            # puts "    assign    _u2            = &{#{self.expand_symbol_range(symbol: "&UIO_OUT_VALUE", from: 0, to: 13)}};"
-            # puts "    assign    _unused        = &{_u0, _u1, _u2};"
 
             puts ""
 
             puts "    // ////////////////////////////////////////////////////////////////////////"
             puts "    // get inputs"
 
-            puts ""
+            # puts ""
 
-            puts "    always @(*)"
+            puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}clk)"
             puts "    begin"
-            puts "        hold                = ui_in[UI_IN_HOLD];"
-            puts "        step                = ui_in[UI_IN_STEP];"
-            puts "        n_taps              = ui_in[UI_IN_N_TAPS];"
-            puts "        length              = ui_in[UI_IN_LENGTH_#{lfsr_length_size - 1}:UI_IN_LENGTH_0];"
+            puts "          hold               <= ui_in[UI_IN_HOLD];"
+            puts "          step               <= ui_in[UI_IN_STEP];"
+
+            puts "          step_on            <= hold &  step;"
+
+            puts "          n_taps             <= ui_in[UI_IN_N_TAPS];"
+            puts "          length             <= ui_in[UI_IN_LENGTH_#{lfsr_length_size - 1}:UI_IN_LENGTH_0];"
             puts "    end // always"
 
             puts ""
@@ -1123,54 +1118,29 @@
 
             puts ""
 
-            puts "    // generate and pass on a conditioned clock (rising)"
-            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}#{clock_symbol})"
-            puts "    begin"
-            puts "        $display(#{DQ}        .................................... hold = 0b%b, step = 0b%b, step_on = 0b%b ....................................#{DQ}, hold, step, step_on);"
-
-            puts "        if (hold)"
-            puts "        begin"
-            puts "            if (step)"
-            puts "            begin"
-            puts "                c_clk_mask     <= ~step_on;"
-            puts "            end"
-
-            puts "            else"
-            puts "                c_clk_mask     <= 0;"
-            puts "            end"
-            puts "            // endif"
-
-            puts "        else"
-            puts "        begin"
-            puts "                c_clk_mask     <= 1;"
-            puts "        end"
-            puts "        // endif"
-
-            puts "    end // always"
-
-            puts ""
-
             puts "    always @(*)"
-            puts "    begin"
-            puts "        c_clk  = clk & c_clk_mask;"
+            puts "    begin // determine lfsr clocking"
+            puts "        c_clk_ena  = ~hold | (hold & step & ~step_on);"
+            puts "        c_clk      = clk & c_clk_ena;"
             puts "    end // always"
+
+            # puts ""
+
+            # puts "    // generate and pass on a conditioned clock (falling)"
+            # puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}#{clock_symbol})"
+            # puts "    begin"
+            # puts "                 step_on  <= step;"
+            # puts "    end // always"
 
             puts ""
 
-            puts "    // generate and pass on a conditioned clock (falling)"
-            puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}#{clock_symbol})"
-            puts "    begin"
-            puts "                 step_on  <= step;"
-            puts "    end // always"
-
-            puts ""
-
-            puts "    // register outputs"
+            puts "    // generate outputs"
             puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}c_clk,"
             puts "             #{polarity?(reset_polarity, pos: "posedge ", neg: "negedge ")}#{reset_symbol})"
+
             puts "    begin"
             puts "        if      (#{polarity?(reset_polarity, pos: "", neg: "~")}#{reset_symbol})"
-            puts "        begin"
+            puts "        begin // reset outputs"
             puts "            uio_out[UIO_OUT_VALID]                      <= 0;"
             puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= 0;"
             puts "            uo_out                                      <= 0;"
@@ -1178,8 +1148,13 @@
             puts "        end"
 
             puts "        else"
-            puts "        begin"
+            puts "        begin // lagtch outputs"
             puts "            uio_out[UIO_OUT_VALID]                      <= valid;"
+
+            # need a function self.generate_signal(symbol_name, hi_bit, lo_bit) which produces symbol_name, symbol_name[hi_bit], symbol_name[hi_bit:lo_bit]
+            # … could extend to an additional hi_bit and lo_bit that produces symbol if both hi_bit(s) and lo_bit(s) match
+            # … could extend to zero-fill or space-fill to align to n bits
+            # need a function self.range_valid(hi_bit, lo_bit) which is true if hi_bit >= lo_bit
 
             if    (lfsr_length_bound >= 15)
                 puts "            uio_out[UIO_OUT_VALUE_14:UIO_OUT_VALUE_08]  <= value[14:08];"
