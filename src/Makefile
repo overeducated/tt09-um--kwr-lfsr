@@ -24,6 +24,11 @@ all:
 	echo "must specify one of: release, test_lfsr, test_logic"
 	exit -1
 
+push:	release
+	git add --all
+	git commit -m "pushing release"
+	git push
+
 release:	generate_lfsr
 	-[ ! -f RELEASE ] && make clean
 	make TEST_OPTIONS= lfsr.v
