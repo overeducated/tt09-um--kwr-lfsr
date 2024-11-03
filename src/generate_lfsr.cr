@@ -1625,7 +1625,7 @@
             puts "        if (cycle > 1)"
             puts "        begin"
             puts "            $display(#{DQ}::::#{DQ});"
-            puts "            $display(#{DQ}::::    dut.ui_in.value = 8'b%08b#{DQ}, ui_in);"
+            puts "            $display(#{DQ}::::    dut.ui_in.value           = 0x%02x#{DQ}, ui_in);"
 
             puts ""
 
