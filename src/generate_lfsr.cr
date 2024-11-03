@@ -1100,7 +1100,7 @@
 
             # puts ""
 
-            puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}clk)"
+            puts "    always @(#{polarity?(clock_polarity, pos: "negedge ", neg: "posedge ")}#{clock_symbol})"
             puts "    begin"
             puts "          hold               <= ui_in[UI_IN_HOLD];"
             puts "          step               <= ui_in[UI_IN_STEP];"
@@ -1121,7 +1121,7 @@
             puts "    always @(*)"
             puts "    begin // determine lfsr clocking"
             puts "        c_clk_ena  = ~hold | (hold & step & ~step_on);"
-            puts "        c_clk      = clk & c_clk_ena;"
+            puts "        c_clk      = #{clock_symbol}#{polarity?(clock_polarity, pos: " & ", neg: " | ~")}c_clk_ena;"
             puts "    end // always"
 
             # puts ""
@@ -1598,6 +1598,19 @@
             four_tap_length  = 7        # was 11 but have been testing shorter lfsr lengths
 
             puts ""
+
+            puts "    always @(#{polarity?(clock_polarity, pos: "posedge ", neg: "negedge ")}#{clock_symbol})"
+            puts "    begin"
+            puts "        $display(#{DQ}::::#{DQ});"
+            puts "        $display(#{DQ}::::    await  ClockCycles(dut.clk, 1)#{DQ});"
+            puts "        $display(#{DQ}::::    assert dut.uio_out.value == 0x%02x#{DQ}, uio_out);"
+            puts "        $display(#{DQ}::::    assert  dut.uo_out.value == 0x%02x#{DQ},  uo_out);"
+            # puts "        $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
+            # puts "        $display(#{DQ}:::: 8'b%08b 8'b%08b#{DQ}, uio_out, uo_out);"
+            puts "    end // always"
+
+            puts ""
+
 
             puts "    always"
             puts "    begin"

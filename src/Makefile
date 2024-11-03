@@ -16,7 +16,7 @@ LFSR_TEST_LFSR	=	--generate test_lfsr
 
 LFSR_TEST_LOGIC	=	--generate test_logic
 
-LFSR_GEN_FILES	=	generate_lfsr generate_lfsr.dwarf lfsr.v lfsr lfsr.out lfsr.vcd
+LFSR_GEN_FILES	=	generate_lfsr generate_lfsr.dwarf lfsr.v lfsr lfsr.out lfsr.cocotb lfsr.vcd
 LFSR_GEN_TAGS	=	RELEASE TEST_LFSR TEST_LOGIC
 
 TEST_OPTIONS	=
@@ -25,7 +25,7 @@ TEST_OPTIONS	=
 
 
 all:
-	echo "must specify one of: release, test_lfsr, test_logic"
+	echo "must specify one of: push, release, test_lfsr, test_logic"
 	exit -1
 
 # ########################################################################
@@ -52,14 +52,14 @@ release:	lfsr
 
 # ##################
 
-test_lfsr:	lfsr.out
+test_lfsr:	lfsr
 	-[ ! -f TEST_LFSR ] && make clean
 	make TEST_OPTIONS="$(LFSR_TEST_LFSR)" lfsr.out
 	touch TEST_LFSR
 
 # ##################
 
-test_logic:	lfsr.out
+test_logic:	lfsr
 	-[ ! -f TEST_LOGIC ] && make clean
 	make TEST_OPTIONS="$(LFSR_TEST_LOGIC)" lfsr.out
 	touch TEST_LOGIC
@@ -77,12 +77,14 @@ lfsr.v:		generate_lfsr
 # ##################
 
 lfsr:		lfsr.v
-	iverilog -v -o $@ $< >& $@.out
+	iverilog -v -o $@ $< >& $@.log
 
 # ##################
 
 lfsr.out:	lfsr
 	./lfsr >& lfsr.out
+	grep :::: lfsr.out | cut -f5- -d: > lfsr.cocotb
+	cat ../test/test.py.in lfsr.cocotb > ../test/test.py
 
 # ########################################################################
 # ########################################################################
